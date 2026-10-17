@@ -1,31 +1,26 @@
 package booking;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class CarBookingArrayDataAccessService implements CarBookingDAO {
-    private static final CarBooking[] carBookings;
-    static{
-        carBookings= new CarBooking[50];
-    }
-    @Override
-    public List<CarBooking> getCarBookings() {
-        return List.of(carBookings);
-    }
+    private static final List<CarBooking> carBookingList = new ArrayList<>();
 
     @Override
+    public List<CarBooking> getCarBookings() {
+        return carBookingList;
+    }
+    @Override
     public CarBooking getCarBooking(UUID bookingId) {
-        for (CarBooking carBooking : carBookings) {
-            if (carBooking.getId().equals(bookingId)) {
-                return carBooking;
-            }
-        }
-        return null;
+        return carBookingList.stream()
+                .filter(carBooking -> carBooking.getId().equals(bookingId))
+                .findFirst().orElse(null);
     }
 
     @Override
     public CarBooking bookCar(CarBooking booking) {
-        for (CarBooking carBooking : carBookings) {
+        for (CarBooking carBooking : carBookingList) {
             carBooking.setId(booking.getId());
             carBooking.setUsers(booking.getUsers());
             carBooking.setCars(booking.getCars());

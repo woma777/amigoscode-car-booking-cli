@@ -44,9 +44,9 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
             throw new IOException("Unexpected object type in bookings file: "
                     + obj.getClass().getName());
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(
-                    "Failed to read existing bookings", e);
+            System.out.println(e.getMessage());
         }
+        return List.of();
     }
 
     @Override

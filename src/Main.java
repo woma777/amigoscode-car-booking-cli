@@ -16,7 +16,6 @@ import java.util.UUID;
 public class Main {
     public static void main(String[] args) {
        CarBookingDAO carBookingDao = new CarBookingFileDataAccessService("bookings.dat");
-// CarBookingDao carBookingDao = new CarBookingArrayDataAccessService();
        CarDAO carDao = new CarArrayDataAccessService();
        CarService carService = new CarService(carDao);
      //  System.out.println(Arrays.toString(carService.getAllCars()));
@@ -27,11 +26,10 @@ public class Main {
      CarBooking carBooking = new CarBooking(UUID.randomUUID(), userService.selectAllUsers(),
              carService.getAllCars(), LocalDate.now(),endDate,
               BigDecimal.TWO,BookingStatus.CANCELLED,LocalDateTime.now());
-      // CarBooking carBooking = new CarBooking();
        CarBookingService carBookingService = new CarBookingService(carBookingDao, userDao,carDao);
-      // System.out.println(carBookingService);
-       // carBookingService.registerCarBooking(carBooking);
-      //  System.out.println(carBookingService.getCarBooking());
-        //carBookingService.getCarBooking(UUID.fromString("b0c77a5b-2e69-4618-8f1e-f26160940fb9"));
+     // System.out.println(carBookingService);
+      //  carBookingService.registerCarBooking(carBooking);
+        System.out.println(carBookingService.getCarBooking());
+        carBookingService.getCarBooking(UUID.fromString("b0c77a5b-2e69-4618-8f1e-f26160940fb9"));
 
 }}
