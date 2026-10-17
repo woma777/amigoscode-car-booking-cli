@@ -1,0 +1,35 @@
+package user;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class UserArrayDataAccessService implements UserDAO {
+    //private static final User[] users;
+    private static final List<User>  userList;
+    static {
+        userList = new ArrayList<>(List.of(
+                new User(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"), "James"),
+                new User(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"), "Jamila")));
+    }
+
+//    static {
+//        users = new User[]{
+//                new User(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"), "James"),
+//                new User(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"), "Jamila")
+//        };
+//    }
+
+
+
+    @Override
+    public List<User> selectAllUsers() {
+        return userList;
+    }
+    @Override
+    public User getUserByID(UUID userId) {
+        return userList.stream()
+                .filter(u -> u.getId().equals(userId))
+                .findFirst().orElse(null);
+    }
+}
