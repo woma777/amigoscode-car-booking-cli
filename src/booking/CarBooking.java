@@ -3,24 +3,26 @@ package booking;
 import car.Car;
 import user.User;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class CarBooking {
+public class CarBooking implements Serializable {
     private UUID id;
-    private User[] users;
-    private Car[] cars;
+    private List<User> users;
+    private List<Car> cars;
     private LocalDate startDate;
     private LocalDate endDate;
     private BigDecimal price;
     private BookingStatus bookingStatus;
     private LocalDateTime bookedAt;
 
-    public CarBooking(UUID id, User[] users, Car[] cars,
+    public CarBooking(UUID id, List<User> users, List<Car> cars,
                       LocalDate startDate, LocalDate endDate,
                       BigDecimal price, BookingStatus bookingStatus,
                       LocalDateTime bookedAt) {
@@ -42,19 +44,19 @@ public class CarBooking {
         this.id = id;
     }
 
-    public User[] getUsers() {
+    public List<User> getUsers() {
         return users;
     }
 
-    public void setUsers(User[] users) {
+    public void setUsers(List<User> users) {
         this.users = users;
     }
 
-    public Car[] getCars() {
+    public List<Car> getCars() {
         return cars;
     }
 
-    public void setCars(Car[] cars) {
+    public void setCars(List<Car> cars) {
         this.cars = cars;
     }
 
@@ -102,8 +104,8 @@ public class CarBooking {
     public String toString() {
         return "CarBooking{" +
                 "id=" + id +
-                ", users=" + Arrays.toString(users) +
-                ", cars=" + Arrays.toString(cars) +
+                ", users=" + users +
+                ", cars=" + cars +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
                 ", price=" + price +
@@ -117,14 +119,14 @@ public class CarBooking {
         if (o == null || getClass() != o.getClass()) return false;
 
         CarBooking that = (CarBooking) o;
-        return Objects.equals(id, that.id) && Arrays.equals(users, that.users) && Arrays.equals(cars, that.cars) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate) && Objects.equals(price, that.price) && bookingStatus == that.bookingStatus && Objects.equals(bookedAt, that.bookedAt);
+        return Objects.equals(id, that.id) && Objects.equals(users, that.users) && Objects.equals(cars, that.cars) && Objects.equals(startDate, that.startDate) && Objects.equals(endDate, that.endDate) && Objects.equals(price, that.price) && bookingStatus == that.bookingStatus && Objects.equals(bookedAt, that.bookedAt);
     }
 
     @Override
     public int hashCode() {
         int result = Objects.hashCode(id);
-        result = 31 * result + Arrays.hashCode(users);
-        result = 31 * result + Arrays.hashCode(cars);
+        result = 31 * result + Objects.hashCode(users);
+        result = 31 * result + Objects.hashCode(cars);
         result = 31 * result + Objects.hashCode(startDate);
         result = 31 * result + Objects.hashCode(endDate);
         result = 31 * result + Objects.hashCode(price);

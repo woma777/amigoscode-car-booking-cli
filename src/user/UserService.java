@@ -1,17 +1,15 @@
 package user;
 
+import java.util.List;
+
 public class UserService {
     private UserDAO userDAO;
-
-    public UserService() {
-    }
 
     public UserService(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
 
-
-    public User[]  selectAllUsers(){
+    public List<User> selectAllUsers(){
         return userDAO.selectAllUsers();
     }
 }

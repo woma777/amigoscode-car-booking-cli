@@ -1,5 +1,7 @@
 package car;
 
+import java.util.List;
+
 public class CarService {
 
 private final CarDAO carDAO;
@@ -13,7 +15,7 @@ private final CarDAO carDAO;
 //        return car;
 //     }
 
-     public Car[] getAllCars(){
+     public List<Car> getAllCars(){
 
         return carDAO.selectAllCars();
      }
