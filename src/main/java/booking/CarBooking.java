@@ -3,6 +3,7 @@ package booking;
 import car.Car;
 import user.User;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -13,6 +14,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CarBooking implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private UUID id;
     private List<User> users;
     private List<Car> cars;
@@ -35,6 +38,7 @@ public class CarBooking implements Serializable {
         this.bookingStatus = bookingStatus;
         this.bookedAt = bookedAt;
     }
+
 
     public UUID getId() {
         return id;

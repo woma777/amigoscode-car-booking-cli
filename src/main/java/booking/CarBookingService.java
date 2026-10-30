@@ -4,6 +4,7 @@ import car.CarDAO;
 import user.User;
 import user.UserDAO;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -19,21 +20,20 @@ public class CarBookingService  {
         this.userDAO = userDAO;
         this.carDAO = carDAO;
     }
-    public CarBooking registerCarBooking(CarBooking carBooking) {
 
-        // 1. Check the user
+    public CarBooking registerCarBooking(CarBooking carBooking) throws IOException {
+
         List<User> users = carBooking.getUsers();
+        if (users == null || users.isEmpty() || users.getFirst() == null) {
+            throw new IllegalArgumentException("At least one user is required");
+        }
 
-        User user = userDAO.getUserByID(users.getFirst().getId());
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-        // 2. Check the car
         List<Car> cars = carBooking.getCars();
-        Car car = carDAO.selectCarById(cars.getFirst().getId());
-        if (car == null) {
-            throw new IllegalArgumentException("Car not found");
+        Car car = cars.getFirst();
+        if (cars == null || cars.isEmpty() || cars.get(cars.size() - 1) == null) {
+            throw new IllegalArgumentException("At least one car is required");
         }
+
         // 3. Validate dates
         LocalDate startDate = carBooking.getStartDate();
         LocalDate endDate = carBooking.getEndDate();
@@ -69,7 +69,8 @@ public class CarBookingService  {
         // 6. Save the booking
         return carBookingDAO.bookCar(carBooking);
     }
-    public List<CarBooking> getCarBooking() {
+    public List<CarBooking> getCarBooking() throws IOException {
+
         return carBookingDAO.getCarBookings();
     }
     public CarBooking getCarBooking(UUID bookingId) {
