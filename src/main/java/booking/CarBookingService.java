@@ -5,10 +5,12 @@ import user.User;
 import user.UserDAO;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CarBookingService  {
@@ -20,25 +22,15 @@ public class CarBookingService  {
         this.userDAO = userDAO;
         this.carDAO = carDAO;
     }
-
-    public CarBooking registerCarBooking(CarBooking carBooking) throws IOException {
-
-        List<User> users = carBooking.getUsers();
-        if (users == null || users.isEmpty() || users.getFirst() == null) {
-            throw new IllegalArgumentException("At least one user is required");
+    public CarBooking book(UUID uuid,UUID userId, UUID carId,
+                              LocalDate startDate, LocalDate endDate) {
+        User user = userDAO.getUserByID(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
         }
-
-        List<Car> cars = carBooking.getCars();
-        Car car = cars.getFirst();
-        if (cars == null || cars.isEmpty() || cars.get(cars.size() - 1) == null) {
-            throw new IllegalArgumentException("At least one car is required");
-        }
-
-        // 3. Validate dates
-        LocalDate startDate = carBooking.getStartDate();
-        LocalDate endDate = carBooking.getEndDate();
-        if (startDate == null || endDate == null) {
-            throw new IllegalArgumentException("Dates are required");
+        Car car = carDAO.selectCarById(carId);
+        if (car == null) {
+            throw new IllegalArgumentException("Car not found");
         }
         if (startDate.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
@@ -48,32 +40,45 @@ public class CarBookingService  {
             throw new IllegalArgumentException(
                     "End date must be after start date");
         }
-        // 4. Check existing bookings
-        List<CarBooking> carBookings = carBookingDAO.getCarBookings();
-        for (CarBooking booking : carBookings) {
-            if (booking == null) {
-                continue;
-            }
-            List<Car> bookedCars = booking.getCars();
-
-
-            // 5. Check whether the car is already booked
-            if (bookedCars.contains(car.getId())
-                    && booking.getBookingStatus() == BookingStatus.ACTIVE
-                    && startDate.isBefore(booking.getEndDate())
-                    && endDate.isAfter(booking.getStartDate())) {
-                throw new IllegalArgumentException(
-                        "Car is not available for the selected dates");
-            }
+        List<CarBooking> bookings = carBookingDAO.getCarBookings();
+        boolean isCarBooked = bookings.stream()
+                .anyMatch(booking ->
+                        booking.getCars().getId().equals(carId)
+                                && booking.getBookingStatus() == BookingStatus.ACTIVE
+                                && startDate.isBefore(booking.getEndDate())
+                                && booking.getStartDate().isBefore(endDate)
+                );
+        if (isCarBooked) {
+            throw new IllegalStateException(
+                    "All car is booked");
         }
-        // 6. Save the booking
-        return carBookingDAO.bookCar(carBooking);
+        long numberOfDays = ChronoUnit.DAYS.between(
+                startDate, endDate);
+        BigDecimal totalPrice = car.getRentalPricePerDay()
+                .multiply(BigDecimal.valueOf(numberOfDays));
+        CarBooking booking = new CarBooking(
+                uuid,
+                user,
+                car,
+                startDate,
+                endDate,
+                totalPrice,
+                BookingStatus.ACTIVE,
+                LocalDateTime.now()
+        );
+        carBookingDAO.bookCar(booking);
+        return booking;
     }
-    public List<CarBooking> getCarBooking() throws IOException {
-
+    public List<CarBooking> getCarBooking()  {
         return carBookingDAO.getCarBookings();
     }
-    public CarBooking getCarBooking(UUID bookingId) {
+    public CarBooking getCarBooking(UUID bookingId) throws IOException {
         return carBookingDAO.getCarBooking(bookingId);
+    }
+    public List<User> allUsersBookedCar(){
+        return carBookingDAO.allUsersBookedCars();
+    }
+    public void deleteCarBooking(UUID bookingId) {
+        carBookingDAO.deleteBooking(bookingId);
     }
 }

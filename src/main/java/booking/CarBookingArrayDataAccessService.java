@@ -1,12 +1,15 @@
 package booking;
 
+import user.User;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CarBookingArrayDataAccessService implements CarBookingDAO {
-    private static final List<CarBooking> carBookingList = new ArrayList<>();
-
+    private  final List<CarBooking> carBookingList = new ArrayList<>();
     @Override
     public List<CarBooking> getCarBookings() {
         return carBookingList;
@@ -15,22 +18,24 @@ public class CarBookingArrayDataAccessService implements CarBookingDAO {
     public CarBooking getCarBooking(UUID bookingId) {
         return carBookingList.stream()
                 .filter(carBooking -> carBooking.getId().equals(bookingId))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
-
     @Override
-    public CarBooking bookCar(CarBooking booking) {
-        for (CarBooking carBooking : carBookingList) {
-            carBooking.setId(booking.getId());
-            carBooking.setUsers(booking.getUsers());
-            carBooking.setCars(booking.getCars());
-            carBooking.setPrice(booking.getPrice());
-            carBooking.setStartDate(booking.getStartDate());
-            carBooking.setEndDate(booking.getEndDate());
-            carBooking.setBookingStatus(booking.getBookingStatus());
-            carBooking.setBookedAt(booking.getBookedAt());
-        }
-
-        return booking;
+    public void bookCar(CarBooking booking) {
+        carBookingList.add(booking);
     }
+    @Override
+    public void deleteBooking(UUID bookingId) {
+        carBookingList.removeIf(
+                carBooking -> carBooking.getId().equals(bookingId));
+    }
+    @Override
+    public List<User> allUsersBookedCars() {
+        return carBookingList.stream()
+                .map(CarBooking::getUsers)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
 }

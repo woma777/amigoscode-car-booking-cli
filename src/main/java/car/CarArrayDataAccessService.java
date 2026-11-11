@@ -1,16 +1,13 @@
 package car;
-
-import booking.CarBooking;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
 public class CarArrayDataAccessService implements CarDAO {
      private static final List<Car> carList;
      static{
-         carList = new ArrayList<Car>(
+         carList = new ArrayList<>(
                  List.of(
                          new Car(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"),
                                  "76hdgc", BigDecimal.TEN,Brand.TESLA,true),
@@ -27,8 +24,16 @@ public class CarArrayDataAccessService implements CarDAO {
     public Car selectCarById(UUID carId) {
         return carList.stream().
                 filter(car -> car.getId().equals(carId))
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
+    @Override
+    public List<Car> selectAllElectricCars() {
+        return carList.stream()
+                .filter(Car::isElectric)
+                .collect(Collectors.toList());
+    }
+
 }
 
 
