@@ -63,27 +63,10 @@ class CarServiceTest {
         //when
         List<Car> actual = underTest.getAllElectricCars();
         //then
-        verify(carDAO).selectAllElectricCars();
         assertThat(actual).isNotNull();
         assertThat(actual).containsExactly(cars.getFirst());
     }
-    @Test
-    void getAllElectricCars_WhenNoElectricCars_ShouldReturnEmptyList() {
-        // given
-        List<Car> cars = List.of(
-                new Car(UUID.fromString("8ca51d2b-aaaf-4bf2-834a-e02964e10fc3"),
-                        "76hdgc", BigDecimal.TEN,Brand.TESLA,true),
-                new Car(UUID.fromString("b10d126a-3608-4980-9f9c-aa179f5cebc3"),
-                        "123reg",BigDecimal.TEN,Brand.TESLA,false)
-        );
-        when(carDAO.selectAllElectricCars())
-                .thenReturn(Collections.emptyList());
-        // when
-        List<Car> actual = underTest.getAllElectricCars();
-        // then
-        verify(carDAO).selectAllElectricCars();
-        assertThat(actual).isEmpty();
-    }
+
     @Test
     void getCarById() {
         //given

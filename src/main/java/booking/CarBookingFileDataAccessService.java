@@ -15,9 +15,12 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
 
     @Override
     public void bookCar(CarBooking booking) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
+        }
         List<CarBooking> bookings = new ArrayList<>(getCarBookings());
         bookings.add(booking);
-            File file = new File(filePath);
             try {
               ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
               out.writeObject(bookings);
@@ -29,7 +32,9 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     @Override
     public void deleteBooking(UUID bookingId) {
         File file = new File(filePath);
-        List<CarBooking> bookings;
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
+        }        List<CarBooking> bookings;
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
             bookings = (List<CarBooking>) in.readObject();
@@ -55,6 +60,8 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public List<Car> allUsersBookedCars() {
         File file = new File(filePath);
         if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
+        }        if (!file.exists()) {
             System.out.println("Car booking file not found.");
             return List.of();
         }
@@ -74,7 +81,9 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     @Override
     public List<Car> getCarBookedByUserId(UUID userId) {
         File file = new File(filePath);
-        if (!file.exists() || file.length() == 0) {
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
+        }        if (!file.exists() || file.length() == 0) {
             return List.of();
         }
         try (ObjectInputStream in =
@@ -96,8 +105,8 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     @Override
     public List<CarBooking> getCarBookings() {
         File file = new File(filePath);
-        if (!file.exists() || file.length() == 0) {
-            return new ArrayList<>();
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
@@ -124,8 +133,8 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     @Override
     public CarBooking getCarBooking(UUID bookingId) {
         File file = new File(filePath);
-        if (!file.exists() || file.length() == 0) {
-            return null;
+        if (!file.exists()) {
+            throw new RuntimeException("File does not exist in the given path" + filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {

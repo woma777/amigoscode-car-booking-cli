@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args)  {
         CarBookingDAO carBookingDao =
                 new CarBookingFileDataAccessService("bookings.dat");
-       // CarDAO carDao = new CarArrayDataAccessService();
+        // CarDAO carDao = new CarArrayDataAccessService();
         CarDAO carDao = new CarFakerDataAccessService();
         CarService carService = new CarService(carBookingDao,carDao);
         UserDAO usersDao = new UserFakerDataAccessService();
@@ -47,8 +47,9 @@ public class Main {
                     System.out.println(userService.selectAllUsers());
                     break;
                 case 2:
-                    System.out.println("Available cars available");
+                    System.out.println("Available cars ");
                     System.out.println(carService.getAllCars());
+                    break;
                 case 3:
                     System.out.println(" Available Electric cars");
                     System.out.println(carService.getAllElectricCars());
@@ -59,9 +60,11 @@ public class Main {
                     UUID userId = UUID.fromString(scanner.nextLine());
                     System.out.print("Enter car ID: ");
                     UUID carId = UUID.fromString(scanner.nextLine());
+                    System.out.print("Enter start date (YYYY-MM-DD): ");
+                    LocalDate startDate = LocalDate.parse(scanner.nextLine());
                     System.out.print("Enter end date (YYYY-MM-DD): ");
                     LocalDate endDate = LocalDate.parse(scanner.nextLine());
-                    System.out.println(carBookingService.book(UUID.randomUUID(),userId,carId,LocalDate.now(),endDate));
+                    System.out.println(carBookingService.book(UUID.randomUUID(),userId,carId,startDate,endDate));
                     break;
                 case 5:
                     System.out.println("All bookings");
@@ -74,8 +77,8 @@ public class Main {
                     System.out.println(carBookingService.allCarsBookedByUser(user_Id));
                     break;
                 case 7:
+                    System.out.print("Enter user ID: ");
                     carBookingService.deleteCarBooking(UUID.fromString(scanner.nextLine()));
-                    System.out.println("booking is deleted");
                     break;
                 case 8:
                     running = false;
@@ -87,6 +90,5 @@ public class Main {
             }
         }
         scanner.close();
-    }
-}
+    }}
 

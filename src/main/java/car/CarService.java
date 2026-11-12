@@ -14,21 +14,20 @@ private final CarDAO carDAO;
         this.carBookingDAO = carBookingDAO;
         this.carDAO = carDAO;
     }
-     public List<Car> getAllCars(){
+    public List<Car> getAllCars(){
         List<Car> allCars = carDAO.selectAllCars();
-         Set<UUID> bookedCarIds = getBookedCarIds();
-         return allCars.stream()
-                 .filter(car -> !bookedCarIds.contains(car.getId()))
-                 .collect(Collectors.toList());
-     }
-     public List<Car> getAllElectricCars(){
-         List<Car> allCars = carDAO.selectAllCars();
-         Set<UUID> bookedCarIds = getBookedCarIds();
-         return allCars.stream()
-                 .filter(car -> !bookedCarIds.contains(car.getId()) && car.isElectric())
-                 .collect(Collectors.toList());
-
-     }
+        Set<UUID> bookedCarIds = getBookedCarIds();
+        return allCars.stream()
+                .filter(car -> !bookedCarIds.contains(car.getId()))
+                .collect(Collectors.toList());
+    }
+    public List<Car> getAllElectricCars(){
+        List<Car> allCars = carDAO.selectAllElectricCars();
+        Set<UUID> bookedCarIds = getBookedCarIds();
+        return allCars.stream()
+                .filter(car -> !bookedCarIds.contains(car.getId()) && car.isElectric())
+                .collect(Collectors.toList());
+    }
     private Set<UUID> getBookedCarIds() {
         return carBookingDAO.getCarBookings().stream()
                 .filter(booking ->

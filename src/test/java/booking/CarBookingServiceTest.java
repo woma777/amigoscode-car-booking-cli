@@ -212,6 +212,6 @@ class CarBookingServiceTest {
         List<Car> actual = underTest.allUsersBookedCar();
         //then
         verify(carBookingDAO).allUsersBookedCars();
-        assertThat(actual).isEqualTo(users);
+        assertThat(actual).isEqualTo(cars);
     }
 }
