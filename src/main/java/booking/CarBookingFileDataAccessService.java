@@ -1,9 +1,11 @@
 package booking;
 
+import car.Car;
 import user.User;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CarBookingFileDataAccessService implements CarBookingDAO   {
     private final String filePath;
@@ -15,7 +17,6 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public void bookCar(CarBooking booking) {
         List<CarBooking> bookings = new ArrayList<>(getCarBookings());
         bookings.add(booking);
-        try {
             File file = new File(filePath);
             try {
               ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
@@ -24,9 +25,6 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
             }catch (IOException ioe){
                 System.out.println(ioe.getMessage());
             }
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
     }
     @Override
     public void deleteBooking(UUID bookingId) {
@@ -54,7 +52,7 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
         }
     }
     @Override
-    public List<User> allUsersBookedCars() {
+    public List<Car> allUsersBookedCars() {
         File file = new File(filePath);
         if (!file.exists()) {
             System.out.println("Car booking file not found.");
@@ -65,12 +63,36 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
             List<CarBooking> bookings =
                     (List<CarBooking>) in.readObject();
             return bookings.stream()
-                    .map(CarBooking::getUsers)
+                    .filter(carBooking -> carBooking.getBookingStatus().equals(BookingStatus.ACTIVE))
+                    .map(CarBooking::getCars)
                     .toList();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException("Failed to read car bookings.", e);
         }
     }
+
+    @Override
+    public List<Car> getCarBookedByUserId(UUID userId) {
+        File file = new File(filePath);
+        if (!file.exists() || file.length() == 0) {
+            return List.of();
+        }
+        try (ObjectInputStream in =
+                     new ObjectInputStream(new FileInputStream(file))) {
+            List<CarBooking> bookedCars =
+                    (List<CarBooking>) in.readObject();
+            return bookedCars.stream()
+                    .filter(booking ->
+                            booking.getUsers().getId().equals(userId))
+                    .map(CarBooking::getCars)
+                    .collect(Collectors.toList());
+
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(
+                    "Failed to read existing bookings", e);
+        }
+    }
+
     @Override
     public List<CarBooking> getCarBookings() {
         File file = new File(filePath);

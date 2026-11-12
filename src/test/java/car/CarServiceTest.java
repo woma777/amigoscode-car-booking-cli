@@ -1,5 +1,6 @@
 package car;
 
+import booking.CarBookingDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,6 +8,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import user.UserDAO;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,11 +25,13 @@ import static org.mockito.Mockito.when;
 class CarServiceTest {
     @Mock
     private CarDAO carDAO;
+    @Mock
+    private CarBookingDAO carBookingDao;
     @InjectMocks
     private CarService underTest;
     @BeforeEach
     void setUp() {
-        underTest = new CarService(carDAO);
+        underTest = new CarService(carBookingDao,carDAO);
     }
     @Test
     void getAllCars() {

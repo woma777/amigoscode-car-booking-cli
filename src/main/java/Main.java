@@ -15,24 +15,23 @@ public class Main {
                 new CarBookingFileDataAccessService("bookings.dat");
        // CarDAO carDao = new CarArrayDataAccessService();
         CarDAO carDao = new CarFakerDataAccessService();
-        CarService carService = new CarService(carDao);
-      //  UserDAO usersDao = new UserFakerDataAccessService();
-        UserDAO usersDao = new UserArrayDataAccessService();
+        CarService carService = new CarService(carBookingDao,carDao);
+        UserDAO usersDao = new UserFakerDataAccessService();
+        //UserDAO usersDao = new UserArrayDataAccessService();
         UserService userService = new UserService(usersDao);
-        LocalDate endDate = LocalDate.of(2029, Month.MAY, 1);
         CarBookingService carBookingService =
                 new CarBookingService(carBookingDao, usersDao, carDao);
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         while (running) {
             System.out.println("\n===== CAR BOOKING CLI =====");
-            System.out.println("1. Book a car");
-            System.out.println("2. Delete booking");
-            System.out.println("3. View user bookings");
-            System.out.println("4. View all bookings");
-            System.out.println("5. View available cars");
-            System.out.println("6. View electric cars");
-            System.out.println("7. View all users");
+            System.out.println("1. View all users");
+            System.out.println("2. View available cars");
+            System.out.println("3. View available electric cars");
+            System.out.println("4. Book a car");
+            System.out.println("5. View all car bookings");
+            System.out.println("6. View car booked by user");
+            System.out.println("7. Delete booking");
             System.out.println("8. Exit");
             System.out.print("Choose an option: ");
             int choice;
@@ -44,33 +43,39 @@ public class Main {
             }
             switch (choice) {
                 case 1:
-                    System.out.println("Book a car");
-                    System.out.println(carBookingService.book(UUID.randomUUID(),userService.selectAllUsers().getLast().getId(),
-                    carService.getAllCars().getLast().getId(), LocalDate.now(),endDate));
+                    System.out.println("All users");
+                    System.out.println(userService.selectAllUsers());
                     break;
                 case 2:
-                    carBookingService.deleteCarBooking(UUID.fromString(scanner.nextLine()));
-                    System.out.println("booking is deleted");
-                    break;
-                case 3:
-                    System.out.println("get all users booked car :");
-                    System.out.println(carBookingService.allUsersBookedCar());
-                    break;
-                case 4:
-                    System.out.println("All bookings");
-                    System.out.println(carBookingService.getCarBooking());
-                    break;
-                case 5:
                     System.out.println("Available cars available");
                     System.out.println(carService.getAllCars());
-                    break;
-                case 6:
+                case 3:
                     System.out.println(" Available Electric cars");
                     System.out.println(carService.getAllElectricCars());
                     break;
+                case 4:
+                    System.out.println("Book a car");
+                    System.out.print("Enter user ID: ");
+                    UUID userId = UUID.fromString(scanner.nextLine());
+                    System.out.print("Enter car ID: ");
+                    UUID carId = UUID.fromString(scanner.nextLine());
+                    System.out.print("Enter end date (YYYY-MM-DD): ");
+                    LocalDate endDate = LocalDate.parse(scanner.nextLine());
+                    System.out.println(carBookingService.book(UUID.randomUUID(),userId,carId,LocalDate.now(),endDate));
+                    break;
+                case 5:
+                    System.out.println("All bookings");
+                    System.out.println(carBookingService.getCarBooking());
+                    break;
+                case 6:
+                    System.out.println("get all booked car for users :");
+                    System.out.print("Enter user ID: ");
+                    UUID user_Id = UUID.fromString(scanner.nextLine());
+                    System.out.println(carBookingService.allCarsBookedByUser(user_Id));
+                    break;
                 case 7:
-                    System.out.println("All users");
-                    System.out.println(userService.selectAllUsers());
+                    carBookingService.deleteCarBooking(UUID.fromString(scanner.nextLine()));
+                    System.out.println("booking is deleted");
                     break;
                 case 8:
                     running = false;

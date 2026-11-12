@@ -208,8 +208,8 @@ class CarBookingServiceTest {
                 BookingStatus.ACTIVE,
                 LocalDateTime.now()));
         //when
-        when(carBookingDAO.allUsersBookedCars()).thenReturn(users);
-        List<User> actual = underTest.allUsersBookedCar();
+        when(carBookingDAO.allUsersBookedCars()).thenReturn(cars);
+        List<Car> actual = underTest.allUsersBookedCar();
         //then
         verify(carBookingDAO).allUsersBookedCars();
         assertThat(actual).isEqualTo(users);

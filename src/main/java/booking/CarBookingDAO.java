@@ -1,5 +1,6 @@
 package booking;
 
+import car.Car;
 import user.User;
 
 import java.io.IOException;
@@ -12,5 +13,6 @@ public interface CarBookingDAO  {
     CarBooking getCarBooking(UUID bookingId) throws IOException;
     void bookCar(CarBooking booking);
     void deleteBooking(UUID bookingId) ;
-    List<User> allUsersBookedCars();
+    List<Car> allUsersBookedCars();
+    List<Car> getCarBookedByUserId(UUID userId);
 }

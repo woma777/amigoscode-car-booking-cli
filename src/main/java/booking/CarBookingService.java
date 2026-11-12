@@ -75,8 +75,12 @@ public class CarBookingService  {
     public CarBooking getCarBooking(UUID bookingId) throws IOException {
         return carBookingDAO.getCarBooking(bookingId);
     }
-    public List<User> allUsersBookedCar(){
+    public List<Car> allUsersBookedCar(){
         return carBookingDAO.allUsersBookedCars();
+    }
+    public List<Car> allCarsBookedByUser(UUID userId){
+        return carBookingDAO.getCarBookedByUserId(userId);
+
     }
     public void deleteCarBooking(UUID bookingId) {
         carBookingDAO.deleteBooking(bookingId);

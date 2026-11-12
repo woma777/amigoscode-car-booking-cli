@@ -157,9 +157,9 @@ class CarBookingArrayDataAccessServiceTest {
         //when
         underTest.bookCar(carBooking);
         //when
-        List<User> users = underTest.allUsersBookedCars();
+        List<Car> users = underTest.allUsersBookedCars();
         //then
         assertThat(users).isNotNull();
-        assertThat(users).containsExactly(user);
+        assertThat(users).containsExactly(car);
     }
 }

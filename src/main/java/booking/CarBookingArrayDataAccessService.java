@@ -1,5 +1,6 @@
 package booking;
 
+import car.Car;
 import user.User;
 
 import java.util.ArrayList;
@@ -31,10 +32,20 @@ public class CarBookingArrayDataAccessService implements CarBookingDAO {
                 carBooking -> carBooking.getId().equals(bookingId));
     }
     @Override
-    public List<User> allUsersBookedCars() {
+    public List<Car> allUsersBookedCars() {
         return carBookingList.stream()
-                .map(CarBooking::getUsers)
+                .filter(carBooking -> carBooking.getBookingStatus().equals(BookingStatus.ACTIVE))
+                .map(CarBooking::getCars)
                 .distinct()
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Car> getCarBookedByUserId(UUID userId) {
+        return carBookingList.stream()
+                .filter(booking ->
+                        booking.getUsers().getId().equals(userId))
+                .map(CarBooking::getCars)
                 .collect(Collectors.toList());
     }
 
