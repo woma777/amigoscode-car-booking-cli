@@ -26,11 +26,8 @@ class CarBookingFileDataAccessServiceTest {
     Path tempDir;
     @BeforeEach
     void setUp() throws IOException {
-        //String filePath = tempDir.resolve("bookings.dat").toString();
-        Path filePath = tempDir.resolve("bookings.dat");
-        Files.createFile(filePath);
-        underTest = new CarBookingFileDataAccessService(filePath.toString());
-     //  underTest = new CarBookingFileDataAccessService(filePath);
+        String filePath = tempDir.resolve("bookings.dat").toString();
+      underTest = new CarBookingFileDataAccessService(filePath);
     }
     @Test
     void itShouldSaveAndRetrieveBooking() throws IOException {

@@ -15,38 +15,43 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
 
     @Override
     public void bookCar(CarBooking booking) {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
-        }
-        List<CarBooking> bookings = new ArrayList<>();
-        bookings.add(booking);
-        try (ObjectOutputStream out =
-                     new ObjectOutputStream(new FileOutputStream(file))) {
-            out.writeObject(bookings);
-        } catch (IOException ioe) {
-            throw new RuntimeException("Failed to save booking", ioe);
+        try {
+            File file = new File(filePath);
+            List<CarBooking> bookings =
+                    new ArrayList<>(getCarBookings());
+            bookings.add(booking);
+            try (ObjectOutputStream out =
+                         new ObjectOutputStream(
+                                 new FileOutputStream(file))) {
+                out.writeObject(bookings);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save booking", e);
         }
     }
     @Override
     public void deleteBooking(UUID bookingId) {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
+            throw new RuntimeException(
+                    "File does not exist in the given path: " + filePath
+            );
         }
         List<CarBooking> bookings;
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
             bookings = (List<CarBooking>) in.readObject();
             boolean removed = bookings.removeIf(
-                    booking -> booking.getId().equals(bookingId));
+                    booking -> booking.getId().equals(bookingId)
+            );
             if (removed) {
                 try (ObjectOutputStream out =
                              new ObjectOutputStream(new FileOutputStream(file))) {
                     out.writeObject(bookings);
-                }
-                catch (IOException ioe){
-                    System.out.println(ioe.getMessage());
+                } catch (IOException ioe) {
+                    throw new RuntimeException(
+                            "Failed to save bookings after deletion", ioe
+                    );
                 }
                 System.out.println("Car booking has been deleted.");
             } else {
@@ -60,7 +65,7 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public List<Car> allUsersBookedCars() {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + "_" + filePath);
+            return new ArrayList<>();
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
@@ -99,9 +104,13 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
 
     @Override
     public List<CarBooking> getCarBookings() {
+//        File file = new File(filePath);
+//        if (!file.exists()) {
+//            throw new RuntimeException("File does not exist in the given path" + "_" + filePath);
+//        }
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
+            return new ArrayList<>();
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
