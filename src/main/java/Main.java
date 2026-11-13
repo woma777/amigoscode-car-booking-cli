@@ -4,6 +4,8 @@ import user.UserArrayDataAccessService;
 import user.UserDAO;
 import user.UserFakerDataAccessService;
 import user.UserService;
+
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -12,7 +14,7 @@ import java.util.UUID;
 public class Main {
     public static void main(String[] args)  {
         CarBookingDAO carBookingDao =
-                new CarBookingFileDataAccessService("bookings.dat");
+                new CarBookingFileDataAccessService("ebookings.dat");
         // CarDAO carDao = new CarArrayDataAccessService();
         CarDAO carDao = new CarFakerDataAccessService();
         CarService carService = new CarService(carBookingDao,carDao);
@@ -77,7 +79,7 @@ public class Main {
                     System.out.println(carBookingService.allCarsBookedByUser(user_Id));
                     break;
                 case 7:
-                    System.out.print("Enter user ID: ");
+                    System.out.print("Enter booking ID: ");
                     carBookingService.deleteCarBooking(UUID.fromString(scanner.nextLine()));
                     break;
                 case 8:

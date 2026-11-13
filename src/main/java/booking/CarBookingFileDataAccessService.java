@@ -17,24 +17,24 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public void bookCar(CarBooking booking) {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
+            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
         }
-        List<CarBooking> bookings = new ArrayList<>(getCarBookings());
+        List<CarBooking> bookings = new ArrayList<>();
         bookings.add(booking);
-            try {
-              ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file));
-              out.writeObject(bookings);
-              out.close();
-            }catch (IOException ioe){
-                System.out.println(ioe.getMessage());
-            }
+        try (ObjectOutputStream out =
+                     new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeObject(bookings);
+        } catch (IOException ioe) {
+            throw new RuntimeException("Failed to save booking", ioe);
+        }
     }
     @Override
     public void deleteBooking(UUID bookingId) {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
-        }        List<CarBooking> bookings;
+            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
+        }
+        List<CarBooking> bookings;
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
             bookings = (List<CarBooking>) in.readObject();
@@ -52,18 +52,15 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
             } else {
                 System.out.println("Car booking not found.");
             }
-        } catch (IOException | ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+        } catch (IOException | ClassNotFoundException ioe) {
+            throw new RuntimeException("Failed to delete booking", ioe);
         }
     }
     @Override
     public List<Car> allUsersBookedCars() {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
-        }        if (!file.exists()) {
-            System.out.println("Car booking file not found.");
-            return List.of();
+            throw new RuntimeException("File does not exist in the given path" + "_" + filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
@@ -82,9 +79,7 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public List<Car> getCarBookedByUserId(UUID userId) {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
-        }        if (!file.exists() || file.length() == 0) {
-            return List.of();
+            throw new RuntimeException("File does not exist in the given path" + "_" + filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
@@ -106,7 +101,7 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public List<CarBooking> getCarBookings() {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
+            throw new RuntimeException("File does not exist in the given path" + "_" +filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {
@@ -134,7 +129,7 @@ public class CarBookingFileDataAccessService implements CarBookingDAO   {
     public CarBooking getCarBooking(UUID bookingId) {
         File file = new File(filePath);
         if (!file.exists()) {
-            throw new RuntimeException("File does not exist in the given path" + filePath);
+            throw new RuntimeException("File does not exist in the given path" + "_" + filePath);
         }
         try (ObjectInputStream in =
                      new ObjectInputStream(new FileInputStream(file))) {

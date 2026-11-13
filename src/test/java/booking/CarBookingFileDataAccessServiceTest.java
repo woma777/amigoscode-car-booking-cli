@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import user.User;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -22,13 +24,14 @@ class CarBookingFileDataAccessServiceTest {
     private CarBookingFileDataAccessService underTest;
     @TempDir
     Path tempDir;
-
     @BeforeEach
-    void setUp() {
-        String filePath = tempDir.resolve("bookings.dat").toString();
-        underTest = new CarBookingFileDataAccessService(filePath);
+    void setUp() throws IOException {
+        //String filePath = tempDir.resolve("bookings.dat").toString();
+        Path filePath = tempDir.resolve("bookings.dat");
+        Files.createFile(filePath);
+        underTest = new CarBookingFileDataAccessService(filePath.toString());
+     //  underTest = new CarBookingFileDataAccessService(filePath);
     }
-
     @Test
     void itShouldSaveAndRetrieveBooking() throws IOException {
         //given
@@ -60,7 +63,6 @@ class CarBookingFileDataAccessServiceTest {
         assertThat(carBookings).hasSize(1);
         assertThat(carBookings.getFirst().getId()).isEqualTo(carBooking.getId());
     }
-
     @Test
     void itShouldDeleteBooking() {
         //given
